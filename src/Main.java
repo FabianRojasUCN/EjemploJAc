@@ -4,14 +4,23 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    private static class ConcurrentTask implements Runnable {
 
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+        private final int number;
+        public ConcurrentTask(int number) {
+            this.number = number;
+        }
+
+        @Override
+        public void run() {
+            System.out.println(this.number);
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         for (int i = 1; i <= 10; i++) {
-            int number = i;
-            executor.execute(() -> {
-                System.out.println(number);
-            });
+            executor.execute(new ConcurrentTask(i));
         }
 
         executor.shutdown();
